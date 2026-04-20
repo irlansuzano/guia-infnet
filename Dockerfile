@@ -8,13 +8,13 @@ ENV NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
 
 # Instalar pnpm globalmente
-RUN npm install -g pnpm@latest
+RUN npm install -g pnpm@8.15.8
 
 # Copiar apenas os arquivos necessários para instalar dependências
 COPY package.json pnpm-lock.yaml ./
 
 # Instalar dependências com cache limpo
-RUN pnpm install --force --frozen-lockfile --ignore-scripts --prod=false
+RUN pnpm install --force --ignore-scripts --prod=false
 
 # Copiar o resto dos arquivos do projeto
 COPY . .
@@ -39,7 +39,7 @@ RUN addgroup --system --gid 1001 nodejs && \
 # Instalar apenas as dependências necessárias
 COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
 RUN npm install -g pnpm@latest && \
-    pnpm install --force --prod --frozen-lockfile --ignore-scripts
+    pnpm install --force --prod --ignore-scripts
 
 # Copiar arquivos de build e públicos
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
