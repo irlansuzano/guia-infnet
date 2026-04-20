@@ -22,67 +22,82 @@ spec:
     spec:
       # Container de inicialização para verificar o ambiente
       initContainers:
-      - name: init-check
-        image: busybox
-        command: ['sh', '-c', 'echo "Iniciando verificação do ambiente..." && sleep 5 && echo "Ambiente verificado com sucesso!"']
+        - name: init-check
+          image: busybox
+          command:
+            [
+              "sh",
+              "-c",
+              'echo "Iniciando verificação do ambiente..." && sleep 5 && echo "Ambiente verificado com sucesso!"',
+            ]
       # Container principal da aplicação
       containers:
-      - name: guia-app
-        image: oliveirarenan1/guia-infnet
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 3000
-        # Variáveis de ambiente necessárias para a aplicação
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: HOSTNAME
-          value: "0.0.0.0"
-        - name: PORT
-          value: "3000"
-        # Limites de recursos para o container
-        resources:
-          requests:
-            cpu: "100m"
-            memory: "256Mi"
-          limits:
-            cpu: "500m"
-            memory: "512Mi"
-        # Hooks de ciclo de vida do container
-        lifecycle:
-          postStart:
-            exec:
-              command: ["/bin/sh", "-c", "echo 'Container iniciado com sucesso!' >> /var/log/container-lifecycle.log"]
-          preStop:
-            exec:
-              command: ["/bin/sh", "-c", "echo 'Container será encerrado em breve...' >> /var/log/container-lifecycle.log"]
-        # Verificação de saúde do container
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          successThreshold: 1
-          failureThreshold: 3
-        # Verificação de prontidão do container
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 3000
-          initialDelaySeconds: 10
-          periodSeconds: 5
-          timeoutSeconds: 3
-          successThreshold: 1
-          failureThreshold: 3
-        # Volume para armazenar logs
-        volumeMounts:
-        - name: logs
-          mountPath: /var/log
+        - name: guia-app
+          image: irlansuzano/guia-infnet
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          # Variáveis de ambiente necessárias para a aplicação
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            - name: PORT
+              value: "3000"
+          # Limites de recursos para o container
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          # Hooks de ciclo de vida do container
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  [
+                    "/bin/sh",
+                    "-c",
+                    "echo 'Container iniciado com sucesso!' >> /var/log/container-lifecycle.log",
+                  ]
+            preStop:
+              exec:
+                command:
+                  [
+                    "/bin/sh",
+                    "-c",
+                    "echo 'Container será encerrado em breve...' >> /var/log/container-lifecycle.log",
+                  ]
+          # Verificação de saúde do container
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3
+          # Verificação de prontidão do container
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 3
+            successThreshold: 1
+            failureThreshold: 3
+          # Volume para armazenar logs
+          volumeMounts:
+            - name: logs
+              mountPath: /var/log
       volumes:
-      - name: logs
-        emptyDir: {}
+        - name: logs
+          emptyDir: {}
 ---
 # Serviço para expor a aplicação
 apiVersion: v1
@@ -118,22 +133,22 @@ spec:
     spec:
       serviceAccountName: prometheus
       containers:
-      - name: prometheus
-        image: prom/prometheus:latest
-        ports:
-        - containerPort: 9090
-        volumeMounts:
-        - name: config-volume
-          mountPath: /etc/prometheus/
-        args:
-        - "--config.file=/etc/prometheus/prometheus.yml"
-        - "--storage.tsdb.path=/prometheus"
-        - "--web.console.libraries=/usr/share/prometheus/console_libraries"
-        - "--web.console.templates=/usr/share/prometheus/consoles"
+        - name: prometheus
+          image: prom/prometheus:latest
+          ports:
+            - containerPort: 9090
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/prometheus/
+          args:
+            - "--config.file=/etc/prometheus/prometheus.yml"
+            - "--storage.tsdb.path=/prometheus"
+            - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+            - "--web.console.templates=/usr/share/prometheus/consoles"
       volumes:
-      - name: config-volume
-        configMap:
-          name: prometheus-config
+        - name: config-volume
+          configMap:
+            name: prometheus-config
 ---
 # Serviço do Prometheus
 apiVersion: v1
@@ -168,19 +183,19 @@ spec:
         app: grafana
     spec:
       containers:
-      - name: grafana
-        image: grafana/grafana:latest
-        ports:
-        - containerPort: 3000
-        env:
-        - name: GF_SECURITY_ADMIN_PASSWORD
-          value: "admin"
-        volumeMounts:
-        - name: grafana-storage
-          mountPath: /var/lib/grafana
+        - name: grafana
+          image: grafana/grafana:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              value: "admin"
+          volumeMounts:
+            - name: grafana-storage
+              mountPath: /var/lib/grafana
       volumes:
-      - name: grafana-storage
-        emptyDir: {}
+        - name: grafana-storage
+          emptyDir: {}
 ---
 # Serviço do Grafana
 apiVersion: v1
@@ -206,15 +221,15 @@ spec:
   template:
     spec:
       containers:
-      - name: k6
-        image: grafana/k6:latest
-        command: ["k6", "run", "/scripts/test.js"]
-        volumeMounts:
-        - name: k6-scripts
-          mountPath: /scripts
+        - name: k6
+          image: grafana/k6:latest
+          command: ["k6", "run", "/scripts/test.js"]
+          volumeMounts:
+            - name: k6-scripts
+              mountPath: /scripts
       volumes:
-      - name: k6-scripts
-        configMap:
-          name: k6-scripts
+        - name: k6-scripts
+          configMap:
+            name: k6-scripts
       restartPolicy: Never
   backoffLimit: 0
