@@ -90,7 +90,7 @@ data:
     providers:
       - name: default
         orgId: 1
-        folder: Infnet
+        folder: ''
         type: file
         options:
           path: /var/lib/grafana/dashboards
@@ -103,159 +103,166 @@ metadata:
   namespace: default
 data:
   guia-infnet.json: |
-    [
-      {
-        "type": "stat",
-        "title": "Prometheus UP",
-        "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
-        "id": 1,
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "targets": [
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "up{job=\"prometheus\"}",
-            "refId": "A"
-          }
-        ],
-        "fieldConfig": { "defaults": { "unit": "short" } },
-        "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } }
-      },
-      {
-        "type": "stat",
-        "title": "Series no TSDB",
-        "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
-        "id": 2,
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "targets": [
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "prometheus_tsdb_head_series",
-            "refId": "A"
-          }
-        ],
-        "fieldConfig": { "defaults": { "unit": "short" } },
-        "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } }
-      },
-      {
-        "type": "stat",
-        "title": "Amostras no ultimo scrape",
-        "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
-        "id": 3,
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "targets": [
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "scrape_samples_scraped{job=\"prometheus\"}",
-            "refId": "A"
-          }
-        ],
-        "fieldConfig": { "defaults": { "unit": "short" } },
-        "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } }
-      },
-      {
-        "type": "stat",
-        "title": "Memoria RSS (processo)",
-        "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
-        "id": 4,
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "targets": [
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "process_resident_memory_bytes{job=\"prometheus\"}",
-            "refId": "A"
-          }
-        ],
-        "fieldConfig": { "defaults": { "unit": "bytes" } },
-        "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } }
-      },
-      {
-        "type": "timeseries",
-        "title": "Amostras anexadas ao TSDB / s",
-        "gridPos": { "h": 9, "w": 12, "x": 0, "y": 4 },
-        "id": 5,
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "fieldConfig": {
-          "defaults": {
-            "unit": "ops",
-            "custom": {
-              "drawStyle": "line",
-              "fillOpacity": 20,
-              "lineInterpolation": "smooth",
-              "showPoints": "never"
+    {
+      "uid": "guia-infnet",
+      "title": "Guia Infnet Dashboard",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "10s",
+      "timezone": "browser",
+      "panels": [
+        {
+          "type": "stat",
+          "title": "Prometheus UP",
+          "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+          "id": 1,
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "up{job=\"prometheus\"}",
+              "refId": "A"
             }
-          }
+          ],
+          "fieldConfig": { "defaults": { "unit": "short" } },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } }
         },
-        "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
-        "targets": [
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "rate(prometheus_tsdb_head_samples_appended_total[5m])",
-            "legendFormat": "samples/s",
-            "refId": "A"
-          }
-        ]
-      },
-      {
-        "type": "timeseries",
-        "title": "Duracao do scrape (seg)",
-        "gridPos": { "h": 9, "w": 12, "x": 12, "y": 4 },
-        "id": 6,
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "fieldConfig": {
-          "defaults": {
-            "unit": "s",
-            "custom": {
-              "drawStyle": "line",
-              "fillOpacity": 20,
-              "lineInterpolation": "smooth",
-              "showPoints": "never"
+        {
+          "type": "stat",
+          "title": "Series no TSDB",
+          "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+          "id": 2,
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "prometheus_tsdb_head_series",
+              "refId": "A"
             }
-          }
+          ],
+          "fieldConfig": { "defaults": { "unit": "short" } },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } }
         },
-        "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
-        "targets": [
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "scrape_duration_seconds{job=\"prometheus\"}",
-            "legendFormat": "{{instance}}",
-            "refId": "A"
-          }
-        ]
-      },
-
-      {
-        "type": "timeseries",
-        "title": "CPU Usage",
-        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 13 },
-        "id": 7,
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "fieldConfig": { "defaults": { "unit": "percentunit" } },
-        "targets": [
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "rate(process_cpu_seconds_total{job=\"prometheus\"}[5m])",
-            "legendFormat": "CPU",
-            "refId": "A"
-          }
-        ]
-      },
-      {
-        "type": "timeseries",
-        "title": "Memory Usage",
-        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 13 },
-        "id": 8,
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "fieldConfig": { "defaults": { "unit": "bytes" } },
-        "targets": [
-          {
-            "datasource": { "type": "prometheus", "uid": "prometheus" },
-            "expr": "process_resident_memory_bytes{job=\"prometheus\"}",
-            "legendFormat": "Memory",
-            "refId": "A"
-          }
-        ]
-      }
-    ]
+        {
+          "type": "stat",
+          "title": "Amostras no ultimo scrape",
+          "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+          "id": 3,
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "scrape_samples_scraped{job=\"prometheus\"}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": { "defaults": { "unit": "short" } },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } }
+        },
+        {
+          "type": "stat",
+          "title": "Memoria RSS (processo)",
+          "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+          "id": 4,
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "process_resident_memory_bytes{job=\"prometheus\"}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": { "defaults": { "unit": "bytes" } },
+          "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false } }
+        },
+        {
+          "type": "timeseries",
+          "title": "Amostras anexadas ao TSDB / s",
+          "gridPos": { "h": 9, "w": 12, "x": 0, "y": 4 },
+          "id": 5,
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "ops",
+              "custom": {
+                "drawStyle": "line",
+                "fillOpacity": 20,
+                "lineInterpolation": "smooth",
+                "showPoints": "never"
+              }
+            }
+          },
+          "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "rate(prometheus_tsdb_head_samples_appended_total[5m])",
+              "legendFormat": "samples/s",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Duracao do scrape (seg)",
+          "gridPos": { "h": 9, "w": 12, "x": 12, "y": 4 },
+          "id": 6,
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "custom": {
+                "drawStyle": "line",
+                "fillOpacity": 20,
+                "lineInterpolation": "smooth",
+                "showPoints": "never"
+              }
+            }
+          },
+          "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "scrape_duration_seconds{job=\"prometheus\"}",
+              "legendFormat": "{{instance}}",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "CPU Usage",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 13 },
+          "id": 7,
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "percentunit" } },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "rate(process_cpu_seconds_total{job=\"prometheus\"}[5m])",
+              "legendFormat": "CPU",
+              "refId": "A"
+            }
+          ]
+        },
+        {
+          "type": "timeseries",
+          "title": "Memory Usage",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 13 },
+          "id": 8,
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "fieldConfig": { "defaults": { "unit": "bytes" } },
+          "targets": [
+            {
+              "datasource": { "type": "prometheus", "uid": "prometheus" },
+              "expr": "process_resident_memory_bytes{job=\"prometheus\"}",
+              "legendFormat": "Memory",
+              "refId": "A"
+            }
+          ]
+        }
+      ]
+    }
 
 ---
 apiVersion: apps/v1
